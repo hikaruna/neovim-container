@@ -1,17 +1,14 @@
-FROM debian:stretch as builder
+FROM alpine as builder
 
-RUN apt-get update && apt-get install -y \
-  ninja-build \
-  gettext \
-  libtool \
-  libtool-bin \
-  autoconf \
-  automake \
-  cmake \
-  g++ \
-  pkg-config \
-  unzip \
-  patch
+RUN apk add --update --no-cache \
+alpine-sdk \
+autoconf \
+automake \
+cmake \
+gettext-dev \
+libintl \
+libtool \
+m4
 
 RUN mkdir /neovim
 WORKDIR /neovim
@@ -20,7 +17,7 @@ ENV CMAKE_BUILD_TYPE Release
 RUN make
 
 
-FROM debian:stretch-slim
+FROM alpine
 RUN mkdir -p /opt/builds
 COPY --from=builder /neovim/build /opt/builds/nvim
 
